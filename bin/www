@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+const mongoose = require('mongoose');
+
+connect()
+  .on('error', console.log)
+  .on('disconnected', connect)
+  .once('open', listen);
+
+function listen () {
+  var app = require('../app');
+  app.set('port', process.env.PORT || 3000);
+  var server = app.listen(app.get('port'), function() {
+    console.log('Express server listening on port ' + server.address().port);
+  });
+}
+
+function connect () {
+  var MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/seatplan'
+  var options = { server: { socketOptions: { keepAlive: 1 } } };
+  return mongoose.connect(MONGO_URL, options).connection;
+}
