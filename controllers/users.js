@@ -1,55 +1,49 @@
-const express = require('express');
-const router = express.Router();
 const User = require('../models/users');
 const jwt = require('jwt-simple');
 
 /**
  * Get all users
+ * @param req
+ * @param res
+ * @returns {Promise|Array|{index: number, input: string}}
  */
-router.get('/', function (req, res) {
+exports.findAll = (req, res) => {
   let q = User.find({});
   q.select('-token -__v');
-  q.exec((err, doc) => res.send(doc));
-});
+  return q.exec((err, doc) => res.send(doc));
+}
 
 /**
- * Create User
+ * Create a new user
+ * @param req
+ * @param res
+ * @returns {*}
  */
-router.post('/', function (req, res) {
+exports.create = (req, res) => {
   if (!req.body.firstName || !req.body.lastName || !req.body.email) {
     return res.status(400).send({error: 'missing field'});
   }
-  User.create({
+  return User.create({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     email: req.body.email
   }, (err, doc) => {
     if (err) {
-      return res.status(500).send(err);
+      return res.status(400).send({error: err.errmsg});
     } else {
       return res.send(doc);
     }
   });
-});
-
-/**
- * Generate new token for a user
- */
-router.get('/:userId/reset', function (req, res) {
-  User.findById(req.params.userId, (err, doc) => {
-    if (err) {
-      return res.status(500).send(err);
-    } else {
-      return doc.resetToken((e, d) => res.send(d));
-    }
-  });
-});
+}
 
 /**
  * Get a single user
+ * @param req
+ * @param res
+ * @returns {Promise|Array|{index: number, input: string}}
  */
-router.get('/:userId', function (req, res) {
-  User
+exports.findOne = (req, res) => {
+  return User
     .findById(req.params.userId)
     .select('-token')
     .exec((err, doc) => {
@@ -59,22 +53,26 @@ router.get('/:userId', function (req, res) {
         return res.send(doc);
       }
     });
-});
+}
 
-/**
- * Login
- */
-router.get('/:userId/login/:token', function (req, res) {
-  User
+exports.resetToken = (req, res) => {
+  return User.findById(req.params.userId, (err, doc) => {
+    if (err) {
+      return res.status(500).send(err);
+    } else {
+      return doc.resetToken((e, d) => res.send(d));
+    }
+  });
+}
+
+exports.login = (req, res) => {
+  return User
     .findOne({_id: req.params.userId, token: req.params.token})
     .exec((err, doc) => {
       if (!doc) {
         return res.status(400).send({error: 'bad user id or token'});
       } else {
-
         return res.send(doc);
       }
     })
-})
-
-module.exports = router;
+}
