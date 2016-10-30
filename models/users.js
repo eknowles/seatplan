@@ -2,20 +2,18 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const uuid = require('uuid');
 const nodemailer = require('nodemailer');
-let smtpConfig = {
+const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
   secure: true,
   auth: {user: process.env.SMTP_PASS, pass: process.env.SMTP_USER}
-};
-const transporter = nodemailer.createTransport(smtpConfig);
+});
 
 const userSchema = new Schema({
   firstName: {type: String, required: true},
   lastName: {type: String, required: true},
   email: {type: String, required: true, unique: true},
   token: String,
-  seat: {type: Schema.Types.ObjectId, ref: 'Seat'},
   admin: Boolean,
 });
 
@@ -40,7 +38,7 @@ userSchema.methods.resetToken = function (cb) {
       return cb(err);
     }
 
-    let tokenUrl = `http://localhost:3000/api/users/${this._id}/login/${this.token}`;
+    let tokenUrl = `http://${process.env.DOMAIN}/api/users/${this._id}/login/${this.token}`;
 
     let mailOptions = {
       from: `"Seat Planner" <${process.env.SMTP_USER}>`,
