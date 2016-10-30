@@ -1,6 +1,7 @@
-var express = require('express');
-var router = express.Router();
-var User = require('../models/users');
+const express = require('express');
+const router = express.Router();
+const User = require('../models/users');
+const jwt = require('jwt-simple');
 
 /**
  * Get all users
@@ -34,12 +35,12 @@ router.post('/', function (req, res) {
 /**
  * Generate new token for a user
  */
-router.get('/:userId/resetToken', function (req, res) {
-  User.findById(req.param('userId'), (err, doc) => {
+router.get('/:userId/reset', function (req, res) {
+  User.findById(req.params.userId, (err, doc) => {
     if (err) {
       return res.status(500).send(err);
     } else {
-      return res.send(doc);
+      return doc.resetToken((e, d) => res.send(d));
     }
   });
 });
@@ -70,6 +71,7 @@ router.get('/:userId/login/:token', function (req, res) {
       if (!doc) {
         return res.status(400).send({error: 'bad user id or token'});
       } else {
+
         return res.send(doc);
       }
     })

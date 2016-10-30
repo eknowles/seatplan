@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+require('dotenv').config();
+
 const mongoose = require('mongoose');
 
 connect()
@@ -7,15 +9,15 @@ connect()
   .once('open', listen);
 
 function listen () {
-  var app = require('../app');
+  const app = require('../app');
   app.set('port', process.env.PORT || 3000);
-  var server = app.listen(app.get('port'), function() {
-    console.log('Express server listening on port ' + server.address().port);
+  const server = app.listen(app.get('port'), function() {
+    console.log(`Express server listening on port ${server.address().port}`);
   });
 }
 
 function connect () {
-  var MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/seatplan'
-  var options = { server: { socketOptions: { keepAlive: 1 } } };
+  const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/seatplan'
+  const options = { server: { socketOptions: { keepAlive: 1 } } };
   return mongoose.connect(MONGO_URL, options).connection;
 }
