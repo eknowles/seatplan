@@ -55,24 +55,6 @@ exports.findOne = (req, res) => {
     });
 }
 
-exports.resetToken = (req, res) => {
-  if (!req.body.email) {
-    return res.status(400).send({error: 'missing email param in body'});
-  }
-
-  return User
-    .findOne({email: req.body.email})
-    .exec((err, doc) => {
-      if (err) {
-        return res.status(500).send(err);
-      } else {
-        return doc.resetToken((e, d) => {
-          return res.send(d);
-        });
-      }
-    });
-}
-
 exports.login = (req, res) => {
   User
     .findOne({_id: req.params.userId, token: req.params.token})
