@@ -1,4 +1,5 @@
 const jwt = require('jwt-simple');
+const User = require('./models/users');
 
 /**
  * Check if request has a valid user
@@ -20,4 +21,24 @@ exports.isAuthed = (req, res, next) => {
  */
 exports.isAdmin = (req, res, next) => {
   return req.user.admin ? next() : res.sendStatus(403);
+}
+
+/**
+ * Decode user for req.user
+ * @param req
+ * @param res
+ * @param next
+ * @returns {*}
+ */
+exports.checkUser = (req, res, next) => {
+  if (req.cookies.token) {
+    const q = jwt.decode(req.cookies.token, process.env.JWT_SECRET);
+    console.log(q);
+    User.findById(q._id).exec((err, doc) => {
+      req.user = doc;
+      return next();
+    });
+  } else {
+    return next();
+  }
 }

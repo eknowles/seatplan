@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
+var middleware = require('./middleware');
 var api =  {
   users: require('./routes/api/user'),
   seats: require('./routes/api/seat')
@@ -27,10 +28,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-app.use(cookieParser());
+app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.all('*', middleware.checkUser);
 app.use('/', routes);
+app.get('/reset', routes);
 app.use('/api/users', api.users);
 app.use('/api/seats', api.seats);
 

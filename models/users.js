@@ -6,7 +6,7 @@ const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
   secure: true,
-  auth: {user: process.env.SMTP_PASS, pass: process.env.SMTP_USER}
+  auth: {user: process.env.SMTP_USER, pass: process.env.SMTP_PASS}
 });
 
 const userSchema = new Schema({
@@ -18,6 +18,7 @@ const userSchema = new Schema({
 });
 
 userSchema.pre('save', function (next) {
+  this.email = this.email.toLowerCase(); // set all email address to lower case
   if (!this.token) {
     this.token = uuid.v4();
   }
@@ -29,38 +30,29 @@ userSchema.virtual('initials').get(function () {
 });
 
 userSchema.methods.resetToken = function (cb) {
-  // set new token
-  this.token = uuid.v4();
+  this.token = uuid.v4(); // set new token
+  let tokenUrl = `http://${process.env.DOMAIN}/login/${this._id}/${this.token}`;
+  let mailOptions = {
+    from: `"Seat Plan" <${process.env.SMTP_USER}>`,
+    to: this.email,
+    subject: `Here's your new magic link! 😍🙌`,
+    text: `Hey ${this.firstName}, click the following link to login and select a desk ${tokenUrl}`,
+    html: `<p>Hey ${this.firstName},</p>
+            <p>Click the following link to login and select a desk!</p>
+            <p><a href="${tokenUrl}">Login</a></p>
+            <p>..of if that doesn't work copy and paste this link into your browser</p>
+            <p><a href="${tokenUrl}">${tokenUrl}</a></p>`
+  };
+
+  // sent the email
+  transporter.sendMail(mailOptions);
 
   // save the user
   this.save((err, doc) => {
     if (err) {
       return cb(err);
     }
-
-    let tokenUrl = `http://${process.env.DOMAIN}/api/users/${this._id}/login/${this.token}`;
-
-    let mailOptions = {
-      from: `"Seat Planner" <${process.env.SMTP_USER}>`,
-      to: this.email,
-      subject: `Your new magic link!😍🙌`,
-      text: `Hey ${this.firstName}, click the following link to login and select a desk ${tokenUrl}`,
-      html: `<p>Hey ${this.firstName},</p>
-<p>Click the following link to login and select a desk!</p>
-<p><a href="${tokenUrl}">Login</a></p>
-<hr>
-<p>..of if that doesn't work copy and paste this link into your browser</p>
-<p><a href="${tokenUrl}">${tokenUrl}</a></p>`
-    };
-
-    // sent the email
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        return cb(error);
-      }
-      console.log('Message sent: ' + info.response);
-      return cb(err, doc);
-    });
+    return cb(err, doc);
   });
 };
 

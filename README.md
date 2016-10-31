@@ -13,6 +13,7 @@ A little app to make classrooms or offices more user friendly where everyone can
 
 ```
 DOMAIN=example.com
+COOKIE_TOKEN=XXX
 SMTP_HOST=smtp.example.com
 SMTP_PORT=465
 SMTP_PASS=youemailpassword

@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  section.section
+    .container
+      p Enter your email address below to be sent a new login link.
+      br
+      label.label Email Address
+      p.control.has-icon.has-addons
+        input.input(type='email', placeholder='first.last@addisonlee.com', style='width:400px;')
+        i.fa.fa-envelope
+
+      button.button.is-primary
+        | Resend Link
+

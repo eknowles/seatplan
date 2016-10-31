@@ -56,23 +56,36 @@ exports.findOne = (req, res) => {
 }
 
 exports.resetToken = (req, res) => {
-  return User.findById(req.params.userId, (err, doc) => {
-    if (err) {
-      return res.status(500).send(err);
-    } else {
-      return doc.resetToken((e, d) => res.send(d));
-    }
-  });
+  if (!req.body.email) {
+    return res.status(400).send({error: 'missing email param in body'});
+  }
+
+  return User
+    .findOne({email: req.body.email})
+    .exec((err, doc) => {
+      if (err) {
+        return res.status(500).send(err);
+      } else {
+        return doc.resetToken((e, d) => {
+          return res.send(d);
+        });
+      }
+    });
 }
 
 exports.login = (req, res) => {
-  return User
+  User
     .findOne({_id: req.params.userId, token: req.params.token})
     .exec((err, doc) => {
       if (!doc) {
         return res.status(400).send({error: 'bad user id or token'});
       } else {
-        return res.send(doc);
+        const jwtToken = jwt.encode({_id: doc._id}, process.env.JWT_SECRET);
+        res.cookie('token', jwtToken, {
+          expires: new Date(Date.now() + (60 * 60 * 24 * 7 * 1000)),
+          httpOnly: true
+        });
+        return res.sendStatus(200);
       }
     })
 }
