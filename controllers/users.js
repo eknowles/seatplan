@@ -85,7 +85,7 @@ exports.login = (req, res) => {
           expires: new Date(Date.now() + (60 * 60 * 24 * 7 * 1000)),
           httpOnly: true
         });
-        return res.sendStatus(200);
+        return res.redirect('/');
       }
     })
 }

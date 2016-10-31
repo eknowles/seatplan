@@ -8,7 +8,7 @@ const seatSchema = new Schema({
   rotation: {type: Number, default: 0},
   width: {type: Number, default: 8},
   height: {type: Number, default: 4},
-  existing: {type: Schema.Types.ObjectId, ref: 'User'},
+  existing: [{type: Schema.Types.ObjectId, ref: 'User'}],
   proposed: [{type: Schema.Types.ObjectId, ref: 'User'}]
 });
 

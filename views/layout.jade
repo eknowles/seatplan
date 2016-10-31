@@ -18,16 +18,14 @@ html(lang='en', ng-app='app')
           a.nav-item.is-brand(href='/')
             | Seat Plan
         .nav-center
-          a.nav-item(href='https://github.com/eknowles/seatplan', target='_blank')
-            span.icon
-              i.fa.fa-github
         span.nav-toggle
           span
           span
           span
         .nav-right.nav-menu
           a.nav-item(href='/help') Help
-          a.nav-item(href='https://github.com/eknowles/seatplan', target='_blank') Github
+          if user
+            a.nav-item(href='/logout') Logout
 
     section.hero.is-primary
       .hero-body
@@ -43,7 +41,7 @@ html(lang='en', ng-app='app')
           p
             strong Seat Plan
             |  by&nbsp;
-            a(href='http://efk.me', target='_blank') Edward Knowles
+            a(href='mailto:edward.knowles@addisonlee.com') Edward Knowles
           p
             a.icon(href='https://github.com/eknowles/seatplan', target='_blank')
               i.fa.fa-github

@@ -33,9 +33,10 @@ exports.isAdmin = (req, res, next) => {
 exports.checkUser = (req, res, next) => {
   if (req.cookies.token) {
     const q = jwt.decode(req.cookies.token, process.env.JWT_SECRET);
-    console.log(q);
     User.findById(q._id).exec((err, doc) => {
-      req.user = doc;
+      if (doc) {
+        req.user = doc;
+      }
       return next();
     });
   } else {
