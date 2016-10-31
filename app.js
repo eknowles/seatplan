@@ -33,7 +33,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.all('*', middleware.checkUser);
 app.use('/', routes);
-app.get('/reset', routes);
 app.use('/api/users', api.users);
 app.use('/api/seats', api.seats);
 

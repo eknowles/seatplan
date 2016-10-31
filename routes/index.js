@@ -17,7 +17,34 @@ router.get('/', function (req, res) {
 });
 
 router.get('/help', function (req, res) {
-  return res.render('reset-token', {title: 'Help', subtitle: 'Get a new login token'});
+  return res.render('help', {title: 'Help', subtitle: 'Having trouble?'});
+});
+
+router.post('/help', function (req, res) {
+  var data = {
+    title: 'Help',
+    subtitle: 'Get a new login token',
+    messages: []
+  };
+  return User
+    .findOne({email: req.body.email})
+    .exec((err, doc) => {
+      if (err || !doc) {
+        data.messages.push({
+          type: 'danger',
+          text: 'We couldn\'t find a user matching that email address.'
+        });
+        return res.render('help', data);
+      } else {
+        return doc.resetToken(() => {
+          data.messages.push({
+            type: 'success',
+            text: 'An email has been sent, check your inbox for a new link.'
+          });
+          return res.render('help', data);
+        });
+      }
+    });
 });
 
 router.get('/logout', function (req, res) {

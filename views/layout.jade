@@ -33,6 +33,15 @@ html(lang='en', ng-app='app')
           h1.title=title
           h2.subtitle=subtitle
 
+    if messages && messages.length
+      section.section(style='padding-bottom:0;')
+        .container
+          for message in messages
+            if message.type === 'success'
+              .notification.is-success=message.text
+            if message.type === 'danger'
+              .notification.is-danger=message.text
+
     block content
 
     footer.footer

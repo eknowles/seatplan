@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  section.section
+    .container
+      form(method="POST", action="/help")
+        p Enter your email address below to be sent a new login link. Be careful, this will overwrite your old token! Only do this if your old link is broken or you've lost the email.
+        br
+        label.label Email Address
+        p.control.has-icon
+          input.input(type='email', name='email', placeholder='first.last@addisonlee.com', value='edward.knowles@addisonlee.com')
+          i.fa.fa-envelope
+
+        button.button.is-primary(type='submit')
+          | Resend Link
