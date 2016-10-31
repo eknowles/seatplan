@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const seatSchema = new Schema({
-  name: String,
+  name: {type: Number, required: true},
   x: {type: Number, default: 0, required: true},
   y: {type: Number, default: 0, required: true},
   rotation: {type: Number, default: 0},

@@ -5,7 +5,6 @@ const middleware = require('../../middleware.js');
 
 router.get('/', UserController.findAll);
 router.get('/:userId', UserController.findOne);
-router.post('/resetToken', UserController.resetToken);
 router.post('/', UserController.create);
 
 module.exports = router;

@@ -18,6 +18,6 @@ function listen () {
 
 function connect () {
   const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/seatplan'
-  const options = { server: { socketOptions: { keepAlive: 1 } } };
+  const options = { server: { socketOptions: { keepAlive: 1 } }, promiseLibrary: require('bluebird') };
   return mongoose.connect(MONGO_URL, options).connection;
 }

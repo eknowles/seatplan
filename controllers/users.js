@@ -56,7 +56,7 @@ exports.findOne = (req, res) => {
 }
 
 exports.login = (req, res) => {
-  User
+  return User
     .findOne({_id: req.params.userId, token: req.params.token})
     .exec((err, doc) => {
       if (!doc) {
